@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PowerShell Module-Handbuch</title>
+  <style>
+    :root { color-scheme: light; }
+    body { margin: 0; font-family: "Segoe UI", Tahoma, Arial, sans-serif; background: #f6f7f9; color: #111; }
+    header { padding: 24px 32px; background: #0b1f2a; color: #f2f5f8; }
+    header h1 { margin: 0; font-size: 22px; }
+    header p { margin: 6px 0 0; color: #b8c4cc; }
+    main { padding: 24px 32px; }
+    .card { background: #fff; border: 1px solid #e3e7ea; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    pre { white-space: pre-wrap; word-wrap: break-word; font-family: "Cascadia Mono", Consolas, monospace; font-size: 13px; line-height: 1.5; margin: 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PowerShell Module-Handbuch (Windows 11 25H2)</h1>
+    <p>Export aus README.md</p>
+  </header>
+  <main>
+    <div class="card">
+      <pre># PowerShell Module-Handbuch (Windows 11 25H2)
+
+Stand: 20.02.2026
+
+Dieses Handbuch beschreibt die Module im Ordner `C:\Users\umuench\Documents\PowerShell\Modules`. Es erklaert Zweck, Nutzung, Voraussetzungen sowie empfohlene Anpassungen fuer einen reibungslosen Einsatz unter unterschiedlichen Benutzerkonten.
+
+Hinweis: Die Datei `Modules.zip` ist ein Paket der Module und eignet sich fuer die Weitergabe.
+
+**Schnellstart**
+
+1. Modulordner nach `C:\Users\&lt;User&gt;\Documents\PowerShell\Modules\` kopieren.
+1. Optional: `Get-Module -ListAvailable` pruefen.
+1. Nutzung: `Import-Module &lt;Modulname&gt;` oder automatische Modulauto-loading nutzen.
+1. Optional: `Setup-Modules.ps1` ausfuehren (legt GitIgnore-Templates an und prueft Abhaengigkeiten).
+1. Optional: `README.html` fuer Offline-Lesemodus oeffnen.
+
+**Uebersicht**
+
+| Modul | Zweck | Hauptbefehle |
+|---|---|---|
+| CodeSigningTools | Authenticode Signieren von PowerShell-Dateien | `Get-CodeSigningCertificate`, `Set-PowerShellCodeSignature` |
+| DatabaseEnv | .env-Dateien fuer MySQL/MariaDB generieren | `New-EnvDB` |
+| DirectoryTree | Verzeichnisbaum (optional JSON) exportieren | `Get-DirectoryTree` |
+| DomainCheck | DNS-Checks fuer NS/A mit Statuscode | `Test-DomainDns` |
+| DualbootSSHKeyStore | SSH-KeyStores zwischen Dual-Boot Windows syncen | `Sync-SSHKeyStore` |
+| GitIgnore | .gitignore mit Templates + Auto-Detection | `New-GitIgnore` |
+| SetFoldersICO | Ordner-Icons fuer Dev-Projekte erzeugen/anwenden | `Set-DevFolderIcons`, `New-FolderIcon`, `Set-FolderIcon` |
+| SysinternalsManager | Sysinternals Suite installieren/aktualisieren + Task | `Install-SysinternalsSuite`, `Update-SysinternalsSuite`, `Register-SysinternalsUpdateTask`, `Get-SysinternalsStatus` |
+| TaskSchedulerTools | Task Scheduler Branches exportieren/importieren | `Export-TaskBranch`, `Import-TaskBranch` |
+| WinPwd | Passwortgenerator mit CharSets | `Get-WinPwd` |
+
+---
+
+**Setup**
+
+Dieses Repository enthaelt ein Setup-Skript, das zusaetzliche Dateien fuer die Module anlegt und den Status der Abhaengigkeiten prueft.
+
+```powershell
+.\Setup-Modules.ps1
+```
+
+Das Skript legt bei Bedarf GitIgnore-Templates an und zeigt fehlende Abhaengigkeiten (z. B. Inkscape) an.
+
+---
+
+**CodeSigningTools**
+
+Zweck: Signiert `.ps1`/`.psm1` Dateien mit einem Code-Signing Zertifikat.
+
+Voraussetzungen:
+- PowerShell 7+
+- Vorhandenes Code-Signing Zertifikat im Store `Cert:\CurrentUser\My`
+
+Beispiele:
+
+```powershell
+Import-Module CodeSigningTools
+Get-CodeSigningCertificate
+Set-PowerShellCodeSignature -Path "C:\Scripts" -TimestampServer "http://timestamp.digicert.com"
+```
+
+Konfiguration:
+- Standard-Subject: `"Uwe Markus Muench - PowerShell Code Signing"` in `Get-CodeSigningCertificate`.
+- Timestamp-Server kann per Parameter gesetzt werden.
+
+---
+
+**DatabaseEnv**
+
+Zweck: Erzeugt `.env` Dateien fuer MySQL/MariaDB, nutzt Vorlagen und maskierte Passworteingabe.
+
+Voraussetzungen:
+- PowerShell 5.1+
+- Im Modulordner eine Vorlage `config.env` oder `.env`
+
+Beispiele:
+
+```powershell
+Import-Module DatabaseEnv
+New-EnvDB -DatabaseSystem MySQL -DatabaseName appdb
+New-EnvDB -DatabaseSystem MariaDB -DatabaseName appdb -User app -FileName ".env.local"
+```
+
+Konfiguration:
+- Vorlage muss Keys wie `DB_MYSQL_HOST`, `DB_MYSQL_PORT`, `DB_MYSQL_USER_DEFAULT`, `DB_MYSQL_PASS_DEFAULT` enthalten.
+- Defaults in `DatabaseEnv.psm1`: `dbuser` / `dbpass` (sollten in der Vorlage ueberschrieben werden).
+
+---
+
+**DirectoryTree**
+
+Zweck: Rekursive Verzeichnisstruktur als Objekt oder JSON.
+
+Voraussetzungen:
+- PowerShell 5.1+
+
+Beispiele:
+
+```powershell
+Import-Module DirectoryTree
+Get-DirectoryTree -Path "C:\Users\&lt;User&gt;\Development" -OutPath "C:\tree.json"
+```
+
+---
+
+**DomainCheck**
+
+Zweck: DNS-Checks fuer NS und A Record mit Statuscode (OK/PENDING/BROKEN/ERROR).
+
+Voraussetzungen:
+- PowerShell 7+
+- Internetverbindung und DNS-Aufloesung
+
+Beispiele:
+
+```powershell
+Import-Module DomainCheck
+Test-DomainDns -Domain "example.com"
+Test-DomainDns -Domain "example.com" -ExpectedNameservers @("ns1.example.com","ns2.example.com") -ExpectedARecord "203.0.113.10"
+Test-DomainDns -Domain "example.com" -Resolver Cloudflare -AsJson
+```
+
+Hinweis:
+- Rueckgabewert ist ein Exit-Code (0 OK, 1 PENDING, 2 BROKEN, 3 ERROR). Ideal fuer Monitoring/Tasks.
+
+---
+
+**DualbootSSHKeyStore**
+
+Zweck: Synchronisiert SSH-KeyStores zwischen zwei Windows-Installationen (Dual-Boot) und setzt sichere ACLs.
+
+Voraussetzungen:
+- PowerShell 7+
+- Administratorrechte (wegen `takeown`/`icacls`)
+- Quell- und Zielpfad auf NTFS
+
+Beispiele:
+
+```powershell
+Import-Module DualbootSSHKeyStore
+Sync-SSHKeyStore -Source "D:\Shared\ssh" -Target "C:\Users\&lt;User&gt;\.ssh"
+```
+
+Hinweis:
+- Nimmt temporaer Besitz und setzt danach Owner-SID des Zielkontos.
+
+---
+
+**GitIgnore**
+
+Zweck: Erstellt oder erweitert `.gitignore` aus Templates mit Auto-Detection (Node, Python, Java).
+
+Voraussetzungen:
+- PowerShell 5.1+
+- Templates unter `C:\ProgramData\Git\Templates`
+  - Pflicht: `.gitignore_base`
+  - Optional: `.gitignore_node`, `.gitignore_python`, `.gitignore_java`, usw.
+
+Beispiele:
+
+```powershell
+Import-Module GitIgnore
+New-GitIgnore
+New-GitIgnore -Type Node,Python
+New-GitIgnore -Append
+New-GitIgnore -TemplatePath "C:\ProgramData\Git\Templates"
+```
+
+---
+
+**SetFoldersICO**
+
+Zweck: Erstellt und setzt Ordner-Icons (280+ Technologien) fuer Dev-Verzeichnisse.
+
+Voraussetzungen:
+- PowerShell 5.1+
+- Inkscape installiert (SVG -&gt; PNG fuer ICO-Generierung)
+
+Beispiele:
+
+```powershell
+Import-Module SetFoldersICO
+Set-DevFolderIcons -BasePath "C:\Users\&lt;User&gt;\Development" -ApplyToFolders -Force
+Set-DevFolderIcons -BasePath "C:\Users\&lt;User&gt;\Development" -ApplyToFolders -ApplyExistingIco
+New-FolderIcon -FolderPath "C:\Dev\MeinProjekt" -Apply
+Get-TechDefinitions -Category Language
+```
+
+Hinweis:
+- Legt `.ico` und `desktop.ini` als Hidden + System ab.
+- `Update-ExplorerIconCache` refresht den Icon-Cache.
+- Optional: `INKSCAPE_PATH` als Umgebungsvariable fuer den Pfad.
+
+---
+
+**SysinternalsManager**
+
+Zweck: Installiert und aktualisiert die Sysinternals Suite inkl. Task Scheduler Automatisierung.
+
+Voraussetzungen:
+- PowerShell 7+ (Core)
+- Internetzugang (Download von `download.sysinternals.com`)
+- Task Scheduler Dienst aktiv
+- Adminrechte fuer Machine-Scope und Task-Registrierung in geschuetzten Pfaden
+
+Beispiele:
+
+```powershell
+Import-Module SysinternalsManager
+Install-SysinternalsSuite -Scope User -Path "C:\Tools\SysInternals"
+Update-SysinternalsSuite -Scope User
+Register-SysinternalsUpdateTask -Scope User -Schedule Daily -At "03:00"
+Update-SysinternalsSuite -Scope User -Proxy "http://proxy.local:8080" -CachePath "C:\Cache\Sysinternals" -UseCache
+Get-SysinternalsStatus -Scope User
+```
+
+Hinweis:
+- Versionierung erfolgt ueber `.sysinternals-version` Datei im Installationsordner.
+
+---
+
+**TaskSchedulerTools**
+
+Zweck: Exportiert und importiert Task Scheduler Branches rekursiv inkl. XML.
+
+Voraussetzungen:
+- PowerShell 5.1+
+- Rechte zum Lesen/Schreiben von Tasks (ggf. Admin)
+
+Beispiele:
+
+```powershell
+Import-Module TaskSchedulerTools
+Export-TaskBranch -TaskPath "\\Eigene\\" -BackupPath "D:\TaskBackup"
+Export-TaskBranch -TaskPath "\\Eigene\\" -BackupPath "D:\TaskBackup" -NameFilter "Backup*","Sync*"
+Import-TaskBranch -SourcePath "D:\TaskBackup" -TaskPath "\\Imported\\"
+```
+
+Hinweis:
+- Unterstuetzt `-WhatIf` fuer Vorschau.
+
+---
+
+**WinPwd**
+
+Zweck: Passwortgenerator mit CharSets und indexierter Ausgabe.
+
+Voraussetzungen:
+- PowerShell 5.1+
+- CharSet Dateien in `WinPwd\CharSets\` (z. B. `hetzner.txt`)
+
+Beispiele:
+
+```powershell
+Import-Module WinPwd
+Get-WinPwd -AllowedChars "hetzner" -PwLength 32 -PwCount 5
+Get-WinPwd -AllowedChars "hetzner" -PwLength 32 -PwCount 10 -Select 3
+```
+
+Hinweis:
+- CharSet muss mind. 12 Zeichen enthalten.
+- Standard: `hetzner` (wenn kein `-AllowedChars` angegeben wird).
+
+---
+
+**Konfiguration, Best Practices und Optimierungen**
+
+Diese Hinweise zielen auf maximale Portabilitaet zwischen Benutzerkonten und Systemen.
+
+Allgemein:
+- Pfade nie hart kodieren. Bevorzugt `Join-Path`, `$env:USERPROFILE`, `$env:LOCALAPPDATA`, `$env:ProgramData`.
+- Module sollten Standardwerte per Parameter ueberschreiben lassen und saubere Defaults nutzen.
+- Schreibrechte in `C:\Program Files` erfordern Admin. Besser User-Scopes anbieten.
+- Logging per Parameter (z. B. `-LogPath`) und keine festen Pfade.
+- `SupportsShouldProcess` nutzen (teilweise bereits vorhanden).
+
+Pro Modul:
+- CodeSigningTools
+  - `SubjectMatch` als Parameter in `Set-PowerShellCodeSignature` durchreichen.
+  - Optional Zertifikatauswahl per Thumbprint.
+- DatabaseEnv
+  - Vorlagenpfad als Parameter erlauben.
+  - `DB_HOST` und `DB_PORT` sollten Defaults enthalten, falls keine Vorlage gefunden wird.
+  - Option fuer `SecureString` als Parameter anbieten.
+- DirectoryTree
+  - Optional Filter fuer Dateitypen und Excludes.
+- DomainCheck
+  - Timeout und Retry-Parameter fuer DNS-Abfragen.
+  - Rueckgabeobjekt optional erzwingen (`-Quiet` ausschalten, `-AsJson` als Ausgabe statt Write-Host).
+- DualbootSSHKeyStore
+  - Dry-Run (`-WhatIf`) und optionales `-Force` fuer bestehende Ordner.
+  - Alternative zu `takeown`/`icacls` fuer nicht-admin Umgebungen: nur kopieren ohne ACL-Aenderung.
+- GitIgnore
+  - Template-Pfad per Parameter ueberschreibbar machen.
+  - Fallback: Templates relativ zum Modulordner suchen, falls `C:\ProgramData\Git\Templates` fehlt.
+- SetFoldersICO
+  - Inkscape-Pfad per Konfigdatei oder Umgebungsvariable (z. B. `INKSCAPE_PATH`) unterstuetzen.
+  - Optionaler Modus ohne Inkscape: nur vorhandene ICOs anwenden.
+  - Default `BasePath` nicht hart kodieren (ist aktuell per Parameter moeglich).
+- SysinternalsManager
+  - Proxy-Unterstuetzung fuer `Invoke-WebRequest`.
+  - Optionaler Download-Cache und Verifikation via SHA256.
+  - Task-Name/Task-Path per Parameter.
+- TaskSchedulerTools
+  - Standardpfade als Parameter konfigurierbar belassen (bereits vorhanden).
+  - Option fuer Export-Filter nach Task-Name.
+- WinPwd
+  - CharSet-Name case-insensitive und Default-CharSet definieren.
+  - Optionales Verbot leicht verwechselbarer Zeichen.
+
+---
+
+**Externe Dateien und Systemvoraussetzungen**
+
+- `C:\ProgramData\Git\Templates\.gitignore_base` und `.gitignore_&lt;typ&gt;` (GitIgnore).
+- Inkscape (SetFoldersICO) oder `INKSCAPE_PATH`.
+- Sysinternals Download-Quelle: `https://download.sysinternals.com/files/SysinternalsSuite.zip`.
+- Task Scheduler Dienst aktiv (SysinternalsManager, TaskSchedulerTools).
+- `WinPwd\CharSets\*.txt` fuer Passwort-CharSets.
+
+---
+
+**Security Hinweise**
+
+- `.env` Dateien nie in Git-Repositorys committen.
+- Bei `DatabaseEnv` bevorzugt `-PasswordSecure` oder interaktive Eingabe.
+- SSH-Keys nur in geschuetzten Verzeichnissen halten; `DualbootSSHKeyStore` setzt ACLs.
+- Signierte Skripte nur mit vertrauenswuerdigen Zertifikaten.
+
+Wenn du moechtest, kann ich die genannten Optimierungen direkt in den Modulen umsetzen.
+</pre>
+    </div>
+  </main>
+</body>
+</html>

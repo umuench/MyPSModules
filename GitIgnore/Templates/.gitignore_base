@@ -1,0 +1,9 @@
+# General
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.log
+*.tmp
+*.bak
+.env
+.env.*

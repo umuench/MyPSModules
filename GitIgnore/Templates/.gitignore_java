@@ -1,0 +1,7 @@
+# Java
+target/
+.gradle/
+*.class
+*.jar
+*.war
+*.ear

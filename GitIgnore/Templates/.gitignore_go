@@ -1,0 +1,7 @@
+# Go
+/bin/
+/pkg/
+*.exe
+*.test
+*.out
+coverage.out

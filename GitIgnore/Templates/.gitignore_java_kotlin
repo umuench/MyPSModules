@@ -1,0 +1,6 @@
+# Kotlin/Java (Gradle)
+.gradle/
+build/
+out/
+*.iml
+/.idea/
