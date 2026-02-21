@@ -72,3 +72,5 @@ function Sync-SSHKeyStore {
 
 Export-ModuleMember -Function Sync-SSHKeyStore
 
+Set-Alias -Name ssk -Value Sync-SSHKeyStore
+Export-ModuleMember -Alias ssk

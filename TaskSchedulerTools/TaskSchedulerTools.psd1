@@ -19,7 +19,7 @@ FunctionsToExport = @(
 
 CmdletsToExport   = @()
 VariablesToExport = '*'
-AliasesToExport   = @()
+AliasesToExport   = @('etb','itb')
 
 FileList = @(
     'TaskSchedulerTools.psm1',
@@ -44,4 +44,3 @@ PrivateData = @{
 }
 
 }
-

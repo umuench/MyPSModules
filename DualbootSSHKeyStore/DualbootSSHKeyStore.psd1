@@ -6,6 +6,7 @@
     Description       = 'Safely sync SSH KeyStores between dual-boot Windows installations'
     PowerShellVersion = '7.0'
     FunctionsToExport = @('Sync-SSHKeyStore')
+    AliasesToExport   = @('ssk')
     PrivateData = @{
         PSData = @{
             ReleaseNotes = @'
@@ -16,4 +17,3 @@ Version 1.0.1
         }
     }
 }
-

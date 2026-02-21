@@ -3,7 +3,7 @@
     RootModule = 'DatabaseEnv.psm1'
 
     # Die Versionsnummer dieses Moduls
-    ModuleVersion = '2.0.1'
+    ModuleVersion = '2.2.1'
 
     # Unterstützte PSEditions
     CompatiblePSEditions = @('Desktop', 'Core')
@@ -36,7 +36,7 @@
     VariablesToExport = @()
 
     # Aus diesem Modul zu exportierende Aliase
-    AliasesToExport = @()
+    AliasesToExport = @('nedb')
 
     # Private Daten, die an das in "RootModule/ModuleToProcess" angegebene Modul übergeben werden sollen
     PrivateData = @{
@@ -46,6 +46,16 @@
 
             # ReleaseNotes of this module
             ReleaseNotes = @'
+Version 2.2.1
+- Added global profile user/pass fallbacks
+- Added alias: nedb
+
+Version 2.2.0
+- Added profile support (system-specific and global suffixes)
+
+Version 2.1.0
+- Added PostgreSQL and MSSQL support
+
 Version 2.0.1
 - TemplatePath parameter to load custom templates
 - SecureString password support

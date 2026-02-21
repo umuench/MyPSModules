@@ -36,7 +36,7 @@
     VariablesToExport = @()
 
     # Aus diesem Modul zu exportierende Aliase
-    AliasesToExport = @()
+    AliasesToExport = @('ngi')
 
     # Private Daten, die an das in "RootModule/ModuleToProcess" angegebene Modul übergeben werden sollen
     PrivateData = @{

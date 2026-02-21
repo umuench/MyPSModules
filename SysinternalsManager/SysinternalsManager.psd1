@@ -29,7 +29,7 @@
     # Keine Cmdlets, Variablen oder Aliase exportieren
     CmdletsToExport   = @()
     VariablesToExport = @()
-    AliasesToExport   = @()
+    AliasesToExport   = @('ism','usm','rsm','urm','ssm')
     
     # Private Daten / PSGallery Metadaten
     PrivateData = @{

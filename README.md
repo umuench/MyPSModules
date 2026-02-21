@@ -31,6 +31,21 @@ Hinweis: Die Datei `Modules.zip` ist ein Paket der Module und eignet sich fuer d
 
 ---
 
+**Aliase (Kurzbefehle)**
+
+- CodeSigningTools: `gcs`, `scs`
+- DatabaseEnv: `nedb`
+- DirectoryTree: `gdt`
+- DomainCheck: `tdd`
+- DualbootSSHKeyStore: `ssk`
+- GitIgnore: `ngi`
+- SetFoldersICO: `sfdi`, `sfi`, `rfi`, `gtd`, `nfi`
+- SysinternalsManager: `ism`, `usm`, `rsm`, `urm`, `ssm`
+- TaskSchedulerTools: `etb`, `itb`
+- WinPwd: `gwp`
+
+---
+
 **Setup**
 
 Dieses Repository enthaelt ein Setup-Skript, das zusaetzliche Dateien fuer die Module anlegt und den Status der Abhaengigkeiten prueft.
@@ -67,7 +82,7 @@ Konfiguration:
 
 **DatabaseEnv**
 
-Zweck: Erzeugt `.env` Dateien fuer MySQL/MariaDB, nutzt Vorlagen und maskierte Passworteingabe.
+Zweck: Erzeugt `.env` Dateien fuer MySQL, MariaDB, PostgreSQL und MSSQL, nutzt Vorlagen und maskierte Passworteingabe.
 
 Voraussetzungen:
 - PowerShell 5.1+
@@ -79,10 +94,18 @@ Beispiele:
 Import-Module DatabaseEnv
 New-EnvDB -DatabaseSystem MySQL -DatabaseName appdb
 New-EnvDB -DatabaseSystem MariaDB -DatabaseName appdb -User app -FileName ".env.local"
+New-EnvDB -DatabaseSystem PostgreSQL -DatabaseName appdb
+New-EnvDB -DatabaseSystem MSSQL -DatabaseName appdb
+New-EnvDB -DatabaseSystem PostgreSQL -DatabaseName appdb -Profile REPLICA
+nedb -DatabaseSystem PostgreSQL -DatabaseName appdb -Profile STAGING
 ```
 
 Konfiguration:
 - Vorlage muss Keys wie `DB_MYSQL_HOST`, `DB_MYSQL_PORT`, `DB_MYSQL_USER_DEFAULT`, `DB_MYSQL_PASS_DEFAULT` enthalten.
+- Zusaetzliche Templates: `DB_POSTGRESQL_*`, `DB_MSSQL_*`
+- Optionales Profil (Variante 1): `DB_<SYSTEM>_PROFILE=REPLICA` und `DB_<SYSTEM>_HOST_REPLICA` usw.
+- Optionales Profil (Variante 2): `DB_PROFILE=STAGING` und `DB_HOST_STAGING`/`DB_PORT_STAGING` als globale Werte.
+- Globale User/Pass (Variante 2): `DB_USER_DEFAULT_STAGING`, `DB_PASS_DEFAULT_STAGING`, `DB_PASS_<USER>_STAGING`.
 - Defaults in `DatabaseEnv.psm1`: `dbuser` / `dbpass` (sollten in der Vorlage ueberschrieben werden).
 
 ---

@@ -130,3 +130,5 @@ function Test-DomainDns {
 
 Export-ModuleMember -Function Test-DomainDns
 
+Set-Alias -Name tdd -Value Test-DomainDns
+Export-ModuleMember -Alias tdd

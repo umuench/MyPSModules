@@ -5,6 +5,9 @@
     Author = 'WinPwd'
     Description = 'Enterprise-grade password generator with policy separation and indexed output'
     PowerShellVersion = '5.1'
+    FunctionsToExport = @('Get-WinPwd')
+    AliasesToExport = @('gwp')
+    VariablesToExport = @()
     PrivateData = @{
         PSData = @{
             ReleaseNotes = @'

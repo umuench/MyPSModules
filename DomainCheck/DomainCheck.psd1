@@ -7,6 +7,7 @@
     PowerShellVersion = '7.0'
     Description       = 'Domain DNS Check (NS / A) für Monitoring & Aufgabenplanung'
     FunctionsToExport = @('Test-DomainDns')
+    AliasesToExport   = @('tdd')
     PrivateData = @{
         PSData = @{
             ReleaseNotes = @'
@@ -17,4 +18,3 @@ Version 1.0.1
         }
     }
 }
-

@@ -104,3 +104,6 @@ function Get-DirectoryTree {
 
 # Exportiere die Funktion, damit sie verfügbar ist
 Export-ModuleMember -Function Get-DirectoryTree
+
+Set-Alias -Name gdt -Value Get-DirectoryTree
+Export-ModuleMember -Alias gdt

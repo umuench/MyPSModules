@@ -19,7 +19,7 @@
 
     CmdletsToExport   = @()
     VariablesToExport = @()
-    AliasesToExport   = @()
+    AliasesToExport   = @('gcs','scs')
 
     PrivateData = @{
         PSData = @{
@@ -33,4 +33,3 @@ Version 1.0.1
         }
     }
 }
-

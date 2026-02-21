@@ -181,3 +181,6 @@ function New-GitIgnore {
 }
 
 Export-ModuleMember -Function New-GitIgnore
+
+Set-Alias -Name ngi -Value New-GitIgnore
+Export-ModuleMember -Alias ngi

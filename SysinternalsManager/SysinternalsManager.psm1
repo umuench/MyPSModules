@@ -898,3 +898,10 @@ Export-ModuleMember -Function @(
     'Unregister-SysinternalsUpdateTask',
     'Get-SysinternalsStatus'
 )
+
+Set-Alias -Name ism -Value Install-SysinternalsSuite
+Set-Alias -Name usm -Value Update-SysinternalsSuite
+Set-Alias -Name rsm -Value Register-SysinternalsUpdateTask
+Set-Alias -Name urm -Value Unregister-SysinternalsUpdateTask
+Set-Alias -Name ssm -Value Get-SysinternalsStatus
+Export-ModuleMember -Alias ism, usm, rsm, urm, ssm

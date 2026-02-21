@@ -305,4 +305,7 @@ Export-ModuleMember -Function `
     Export-TaskBranch,
     Import-TaskBranch
 
+Set-Alias -Name etb -Value Export-TaskBranch
+Set-Alias -Name itb -Value Import-TaskBranch
+Export-ModuleMember -Alias etb, itb
 

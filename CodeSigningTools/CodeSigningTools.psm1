@@ -82,6 +82,10 @@ Export-ModuleMember -Function `
     Get-CodeSigningCertificate,
     Set-PowerShellCodeSignature
 
+Set-Alias -Name gcs -Value Get-CodeSigningCertificate
+Set-Alias -Name scs -Value Set-PowerShellCodeSignature
+Export-ModuleMember -Alias gcs, scs
+
 
 # SIG # Begin signature block
 # MIIfSgYJKoZIhvcNAQcCoIIfOzCCHzcCAQExDzANBglghkgBZQMEAgEFADB5Bgor

@@ -100,7 +100,7 @@ function New-EnvDB {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory = $true, Position = 0, HelpMessage = "Ziel-DB-System (MySQL/MariaDB).")]
-        [ValidateSet('MySQL', 'MariaDB')]
+        [ValidateSet('MySQL', 'MariaDB', 'PostgreSQL', 'MSSQL')]
         [string]$DatabaseSystem,
         
         [Parameter(Mandatory = $true, Position = 1, HelpMessage = "Name der Datenbank.")]
@@ -121,6 +121,9 @@ function New-EnvDB {
         [Parameter(HelpMessage = "Pfad zur Vorlage (config.env oder .env).")]
         [string]$TemplatePath,
 
+        [Parameter(HelpMessage = "Optionales Instanz/Profil (z. B. REPLICA, STAGING).")]
+        [string]$Profile,
+
         [Parameter(HelpMessage = "Überschreiben erzwingen.")]
         [switch]$Force
     )
@@ -136,13 +139,41 @@ function New-EnvDB {
     Import-EnvFile -TemplatePath $TemplatePath
     $Prefix = "DB_$($DatabaseSystem.ToUpper())_"
 
-    # 3. Host & Port aus Vorlage
-    $FinalHost = $script:EnvConfig["${Prefix}HOST"]
-    $FinalPort = $script:EnvConfig["${Prefix}PORT"]
-    if (-not $FinalHost) { $FinalHost = "localhost" }
-    if (-not $FinalPort) { $FinalPort = "3306" }
+    # 3. Profil/Instanz bestimmen (Parameter > System-Profil > Global-Profil)
+    $FinalProfile = $null
+    if ($Profile) {
+        $FinalProfile = $Profile.ToUpper()
+    }
+    elseif ($script:EnvConfig.ContainsKey("${Prefix}PROFILE")) {
+        $FinalProfile = $script:EnvConfig["${Prefix}PROFILE"].ToUpper()
+    }
+    elseif ($script:EnvConfig.ContainsKey("DB_PROFILE")) {
+        $FinalProfile = $script:EnvConfig["DB_PROFILE"].ToUpper()
+    }
 
-    # 4. Benutzer & Passwort Logik
+    # 4. Host & Port aus Vorlage (Profil zuerst, dann Standard)
+    $FinalHost = $null
+    $FinalPort = $null
+    if ($FinalProfile) {
+        $FinalHost = $script:EnvConfig["${Prefix}HOST_$FinalProfile"]
+        $FinalPort = $script:EnvConfig["${Prefix}PORT_$FinalProfile"]
+        if (-not $FinalHost) { $FinalHost = $script:EnvConfig["DB_HOST_$FinalProfile"] }
+        if (-not $FinalPort) { $FinalPort = $script:EnvConfig["DB_PORT_$FinalProfile"] }
+    }
+    if (-not $FinalHost) { $FinalHost = $script:EnvConfig["${Prefix}HOST"] }
+    if (-not $FinalPort) { $FinalPort = $script:EnvConfig["${Prefix}PORT"] }
+    if (-not $FinalHost) { $FinalHost = "localhost" }
+    if (-not $FinalPort) {
+        $FinalPort = switch ($DatabaseSystem) {
+            "MySQL"       { "3306" }
+            "MariaDB"     { "3306" }
+            "PostgreSQL"  { "5432" }
+            "MSSQL"       { "1433" }
+            default       { "3306" }
+        }
+    }
+
+    # 5. Benutzer & Passwort Logik
     $FinalUser = $null
     $FinalPass = $null
 
@@ -150,9 +181,17 @@ function New-EnvDB {
     if ($PSBoundParameters.ContainsKey('User')) {
         $FinalUser = $User
     } else {
-        # Default User aus Vorlage
-        $key = "${Prefix}USER_DEFAULT"
-        $FinalUser = if ($script:EnvConfig.ContainsKey($key)) { $script:EnvConfig[$key] } else { $script:DefaultUser }
+        # Default User aus Vorlage (Profil zuerst, dann Standard)
+        if ($FinalProfile -and $script:EnvConfig.ContainsKey("${Prefix}USER_DEFAULT_$FinalProfile")) {
+            $FinalUser = $script:EnvConfig["${Prefix}USER_DEFAULT_$FinalProfile"]
+        }
+        elseif ($FinalProfile -and $script:EnvConfig.ContainsKey("DB_USER_DEFAULT_$FinalProfile")) {
+            $FinalUser = $script:EnvConfig["DB_USER_DEFAULT_$FinalProfile"]
+        }
+        else {
+            $key = "${Prefix}USER_DEFAULT"
+            $FinalUser = if ($script:EnvConfig.ContainsKey($key)) { $script:EnvConfig[$key] } else { $script:DefaultUser }
+        }
     }
 
     # B) Passwort ermitteln (Hier ist die neue Logik!)
@@ -166,14 +205,22 @@ function New-EnvDB {
     }
     else {
         # Fall 2: Kein Passwort-Parameter. Prüfe Vorlage für diesen User.
-        $tplPassKey = "${Prefix}PASS_$($FinalUser.ToUpper())"
+        $tplPassKey = if ($FinalProfile) { "${Prefix}PASS_$($FinalUser.ToUpper())_$FinalProfile" } else { "${Prefix}PASS_$($FinalUser.ToUpper())" }
         
         if ($script:EnvConfig.ContainsKey($tplPassKey)) {
             Write-Verbose "Passwort für '$FinalUser' in Vorlage gefunden."
             $FinalPass = $script:EnvConfig[$tplPassKey]
         }
+        elseif ($FinalProfile -and $script:EnvConfig.ContainsKey("DB_PASS_$($FinalUser.ToUpper())_$FinalProfile")) {
+            $FinalPass = $script:EnvConfig["DB_PASS_$($FinalUser.ToUpper())_$FinalProfile"]
+        }
+        elseif ($FinalProfile -and $FinalUser -eq $script:EnvConfig["${Prefix}USER_DEFAULT_$FinalProfile"]) {
+            $FinalPass = $script:EnvConfig["${Prefix}PASS_DEFAULT_$FinalProfile"]
+        }
+        elseif ($FinalProfile -and $FinalUser -eq $script:EnvConfig["DB_USER_DEFAULT_$FinalProfile"]) {
+            $FinalPass = $script:EnvConfig["DB_PASS_DEFAULT_$FinalProfile"]
+        }
         elseif ($FinalUser -eq $script:EnvConfig["${Prefix}USER_DEFAULT"]) {
-            # Es ist der Default User, nimm Default Pass
             $FinalPass = $script:EnvConfig["${Prefix}PASS_DEFAULT"]
         }
         else {
@@ -184,17 +231,18 @@ function New-EnvDB {
         }
     }
 
-    # 5. Werte quoten (für Sonderzeichen)
+    # 6. Werte quoten (für Sonderzeichen)
     $OutHost = Quote-EnvValue $FinalHost
     $OutPort = Quote-EnvValue $FinalPort
     $OutUser = Quote-EnvValue $FinalUser
     $OutPass = Quote-EnvValue $FinalPass
     $OutName = Quote-EnvValue $DatabaseName
 
-    # 6. Inhalt bauen
+    # 7. Inhalt bauen
     $content = @(
         "# Generated by New-EnvDB",
         "# System: $DatabaseSystem",
+        $(if ($FinalProfile) { "# Profile: $FinalProfile" } else { $null }),
         "",
         "DB_HOST=$OutHost",
         "DB_PORT=$OutPort",
@@ -203,7 +251,7 @@ function New-EnvDB {
         "DB_NAME=$OutName"
     )
 
-    # 7. Schreiben
+    # 8. Schreiben
     if ($PSCmdlet.ShouldProcess($targetPath, "Erstelle .env")) {
         try {
             $content | Out-File -FilePath $targetPath -Encoding utf8 -Force
@@ -213,4 +261,5 @@ function New-EnvDB {
     }
 }
 
-Export-ModuleMember -Function New-EnvDB
+Set-Alias -Name nedb -Value New-EnvDB
+Export-ModuleMember -Function New-EnvDB -Alias nedb
