@@ -56,6 +56,14 @@ Dieses Repository enthaelt ein Setup-Skript, das zusaetzliche Dateien fuer die M
 
 Das Skript legt bei Bedarf GitIgnore-Templates an und zeigt fehlende Abhaengigkeiten (z. B. Inkscape) an.
 
+**Update / Reload**
+
+Nach einem Update der Moduldateien kannst du die Module in der aktuellen PowerShell-Session neu laden:
+
+```powershell
+.\Reload-Modules.ps1
+```
+
 ---
 
 **CodeSigningTools**
