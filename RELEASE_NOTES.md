@@ -1,6 +1,16 @@
 # Release Notes
 
-## Zusammenfassung
+## v2026.02.1 (Public Cleanup)
+
+- Entfernt `DatabaseEnv/.env` aus dem Repo (nur `.env.example` enthalten)
+- `.gitignore` erweitert (u. a. `.env`, `.venv`)
+- README aktualisiert (Public-Hinweise + .env.example Workflow)
+
+---
+
+## v2026.02 (Hauptrelease)
+
+### Zusammenfassung
 Dieses Release liefert ein vollstaendiges Modul-Handbuch, ein Setup-Skript sowie zahlreiche funktionale Verbesserungen und Best-Practice-Optimierungen in allen Modulen.
 
 ## Highlights
@@ -26,4 +36,3 @@ Dieses Release liefert ein vollstaendiges Modul-Handbuch, ein Setup-Skript sowie
 - `CHECKLIST.md`
 - `GitIgnore/Templates/*`
 - `RELEASE_NOTES.md`
-
