@@ -119,6 +119,17 @@ Zweck: Erzeugt `.env` Dateien fuer MySQL, MariaDB, PostgreSQL und MSSQL, nutzt V
 Voraussetzungen:
 - PowerShell 5.1+
 - Im Modulordner eine Vorlage `config.env` oder `.env`
+- In Public-Repos wird `.env` nicht mitgeliefert (nur `.env.example`)
+
+**Vorlage benutzen (.env.example -> .env)**
+
+Wenn du eine Beispiel-Datei erhalten hast:
+
+```powershell
+Copy-Item "DatabaseEnv\.env.example" "DatabaseEnv\.env"
+```
+
+Danach die Werte in `DatabaseEnv\.env` anpassen.
 
 Beispiele:
 
