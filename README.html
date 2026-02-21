@@ -110,6 +110,30 @@ Konfiguration:
 - Standard-Subject: `"Uwe Markus Muench - PowerShell Code Signing"` in `Get-CodeSigningCertificate`.
 - Timestamp-Server kann per Parameter gesetzt werden.
 
+**Zertifikat erstellen (kurz)**
+
+Self-signed (lokal, schnell):
+
+```powershell
+$cert = New-SelfSignedCertificate `
+  -Type CodeSigning `
+  -Subject "CN=Uwe Markus Muench - PowerShell Code Signing" `
+  -CertStoreLocation "Cert:\CurrentUser\My" `
+  -KeyAlgorithm RSA -KeyLength 2048 `
+  -NotAfter (Get-Date).AddYears(5)
+
+# Optional: als vertrauenswuerdig markieren (lokal)
+$store = New-Object System.Security.Cryptography.X509Certificates.X509Store("Root","CurrentUser")
+$store.Open("ReadWrite")
+$store.Add($cert)
+$store.Close()
+```
+
+Unternehmens-CA (empfohlen in Teams):
+- Code-Signing Zertifikat ueber die interne CA ausstellen lassen.
+- Zertifikat landet in `Cert:\CurrentUser\My` oder `Cert:\LocalMachine\My`.
+- Signaturen werden im Unternehmen automatisch vertraut.
+
 ---
 
 **DatabaseEnv**
