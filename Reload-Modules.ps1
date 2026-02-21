@@ -18,6 +18,12 @@ if (-not (Test-Path $ModuleRoot)) {
 $modules = Get-ChildItem $ModuleRoot -Directory | Select-Object -ExpandProperty Name
 
 foreach ($name in $modules) {
+    if ($name -eq ".venv" -or $name -eq "venv") { continue }
+    $psd1 = Join-Path $ModuleRoot "$name\$name.psd1"
+    $psm1 = Join-Path $ModuleRoot "$name\$name.psm1"
+    if (-not (Test-Path $psd1) -and -not (Test-Path $psm1)) {
+        continue
+    }
     if (Get-Module $name) {
         Remove-Module $name -Force -ErrorAction SilentlyContinue
     }

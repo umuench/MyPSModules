@@ -78,13 +78,34 @@ function Set-PowerShellCodeSignature {
     }
 }
 
+function Set-ModuleAlias {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Name,
+        [Parameter(Mandatory)]
+        [string]$Value,
+        [ref]$ExportList
+    )
+
+    $existing = Get-Alias -Name $Name -ErrorAction SilentlyContinue
+    if ($existing) {
+        if ($existing.Options -match 'ReadOnly|Constant') {
+            return
+        }
+    }
+
+    Set-Alias -Name $Name -Value $Value -Force
+    $ExportList.Value += $Name
+}
+
+$aliasesToExport = @()
+Set-ModuleAlias -Name gcs -Value Get-CodeSigningCertificate -ExportList ([ref]$aliasesToExport)
+Set-ModuleAlias -Name scs -Value Set-PowerShellCodeSignature -ExportList ([ref]$aliasesToExport)
+
 Export-ModuleMember -Function `
     Get-CodeSigningCertificate,
-    Set-PowerShellCodeSignature
-
-Set-Alias -Name gcs -Value Get-CodeSigningCertificate
-Set-Alias -Name scs -Value Set-PowerShellCodeSignature
-Export-ModuleMember -Alias gcs, scs
+    Set-PowerShellCodeSignature `
+    -Alias $aliasesToExport
 
 
 # SIG # Begin signature block
