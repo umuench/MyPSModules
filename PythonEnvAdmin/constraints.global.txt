@@ -1,0 +1,7 @@
+# Globale Constraints für PythonEnvAdmin
+# Diese Datei ist optional. Sie wird nur verwendet,
+# wenn du Install-VenvRequirements oder Update-VenvPip
+# mit -UseGlobalConstraints aufrufst.
+#
+# Beispiel:
+# pydantic-core==2.41.5

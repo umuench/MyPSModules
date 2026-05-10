@@ -1,46 +1,32 @@
-@{
+﻿@{
+    RootModule           = 'TaskSchedulerTools.psm1'
+    ModuleVersion        = '1.0.0.0'
+    CompatiblePSEditions = @('Desktop', 'Core')
 
-RootModule        = 'TaskSchedulerTools.psm1'
-ModuleVersion     = '1.1.0'
-GUID              = '9d7a6c4e-3c5f-4f2a-b8b3-6e2f9a1c7d55'
+    GUID                 = '9d7a6c4e-3c5f-4f2a-b8b3-6e2f9a1c7d55'
 
-Author            = 'Alwi'
-CompanyName       = 'Private'
-Copyright         = '(c) 2026 Alwi'
-Description       = 'Export and Import Scheduled Task branches recursively including folder structure and credentials.'
+    Author               = 'Uwe Markus Münch'
+    CompanyName          = 'GFN-Retrainee'
+    Copyright            = '(c) 2026 Uwe Markus Münch. All rights reserved.'
 
-PowerShellVersion = '5.1'
-CompatiblePSEditions = @('Desktop','Core')
+    Description          = 'Export und Import geplanter Tasks (Scheduled Tasks) als XML-Dateien inklusive rekursiver Ordnerstruktur und Credential-Unterstuetzung.'
 
-FunctionsToExport = @(
-    'Export-TaskBranch',
-    'Import-TaskBranch'
-)
+    PowerShellVersion    = '5.1'
 
-CmdletsToExport   = @()
-VariablesToExport = '*'
-AliasesToExport   = @('etb','itb')
+    FunctionsToExport = @(
+        'Export-TaskBranch',
+        'Import-TaskBranch'
+    )
 
-FileList = @(
-    'TaskSchedulerTools.psm1',
-    'TaskSchedulerTools.psd1'
-)
+    CmdletsToExport   = @()
+    VariablesToExport = @()
+    AliasesToExport   = @('etb', 'itb')
 
-PrivateData = @{
-
-    PSData = @{
-
-        Tags = @(
-            'TaskScheduler',
-            'ScheduledTasks',
-            'Export',
-            'Import',
-            'Automation',
-            'Migration'
-        )
-
-        ReleaseNotes = '1.1.0: Added NameFilter for Export-TaskBranch. 1.0.1: Hardened export/import path handling, task enumeration, and credential compatibility.'
+    PrivateData = @{
+        PSData = @{
+            Tags         = @('TaskScheduler', 'ScheduledTasks', 'Export', 'Import', 'Automation', 'Migration')
+            ProjectUri   = 'local'
+            ReleaseNotes = 'Version 1.0.0.0 - Refactored zu Public/Private-Struktur; StrictMode; unapproved Verb behoben (Format-TaskPath).'
+        }
     }
-}
-
 }

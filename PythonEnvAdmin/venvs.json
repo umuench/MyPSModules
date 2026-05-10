@@ -1,0 +1,84 @@
+[
+  {
+    "Name": "DeepMail",
+    "ProjectPath": "C:\\Users\\umuench\\Development\\Python\\DeepMail",
+    "VenvPath": ".venv",
+    "RequirementsPath": "requirements.txt",
+    "ConstraintsPath": "constraints.txt",
+    "ExcludePackages": []
+  },
+  {
+    "Name": "LernplattformLogger",
+    "ProjectPath": "C:\\Users\\umuench\\Development\\Claude\\LernplattformLogger",
+    "VenvPath": ".venv",
+    "RequirementsPath": "requirements.txt",
+    "ConstraintsPath": "constraints.txt",
+    "ExcludePackages": []
+  },
+  {
+    "Name": "LiteLLM",
+    "ProjectPath": "C:\\Users\\umuench\\Development\\Python\\LiteLLM",
+    "VenvPath": ".venv",
+    "RequirementsPath": "requirements.txt",
+    "ConstraintsPath": "constraints.txt",
+    "ExcludePackages": [
+      "pydantic-core"
+    ]
+  },
+  {
+    "Name": "Quarto",
+    "ProjectPath": "C:\\Users\\umuench\\Development\\Python\\Quarto",
+    "VenvPath": ".venv",
+    "RequirementsPath": "requirements.txt",
+    "ConstraintsPath": "constraints.txt",
+    "ExcludePackages": []
+  },
+  {
+    "Name": "KonzApp",
+    "ProjectPath": "C:\\Users\\umuench\\Dropbox\\20260103\\Development\\GIT\\REPOS\\konz.app",
+    "VenvPath": ".venv",
+    "RequirementsPath": "requirements.txt",
+    "ConstraintsPath": "constraints.txt",
+    "ExcludePackages": []
+  },
+  {
+    "Name": "Zeitmanagement",
+    "ProjectPath": "C:\\Users\\umuench\\Dropbox\\20260103\\Development\\JAVA\\Zeitmanagement",
+    "VenvPath": ".venv",
+    "RequirementsPath": "requirements.txt",
+    "ConstraintsPath": "constraints.txt",
+    "ExcludePackages": []
+  },
+  {
+    "Name": "SSDCleaner",
+    "ProjectPath": "C:\\Users\\umuench\\Dropbox\\20260103\\Development\\PYTHON\\SSDCleaner",
+    "VenvPath": ".venv",
+    "RequirementsPath": "requirements.txt",
+    "ConstraintsPath": "constraints.txt",
+    "ExcludePackages": []
+  },
+  {
+    "Name": "WochenberichtApp",
+    "ProjectPath": "C:\\Users\\umuench\\Dropbox\\20260103\\Development\\PYTHON\\WochenberichtApp",
+    "VenvPath": ".venv",
+    "RequirementsPath": "requirements.txt",
+    "ConstraintsPath": "constraints.txt",
+    "ExcludePackages": []
+  },
+  {
+    "Name": "PyCharmMiscProject",
+    "ProjectPath": "C:\\Users\\umuench\\PyCharmMiscProject",
+    "VenvPath": ".venv",
+    "RequirementsPath": "requirements.txt",
+    "ConstraintsPath": "constraints.txt",
+    "ExcludePackages": []
+  },
+  {
+    "Name": "PyCharmMiscBackup",
+    "ProjectPath": "C:\\Users\\umuench\\OneDrive - GFN GmbH (EDU)\\BACKUP\\PyCharmMiscProject",
+    "VenvPath": ".venv",
+    "RequirementsPath": "requirements.txt",
+    "ConstraintsPath": "constraints.txt",
+    "ExcludePackages": []
+  }
+]

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Installiert das SetFoldersICO PowerShell-Modul.
 
